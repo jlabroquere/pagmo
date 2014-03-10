@@ -75,32 +75,19 @@ int main()
 	std::cout << "Evolve method of the archipelago (with migration): " << *std::min_element(temp.begin(),temp.end()) << std::endl; 
 	return 0;
 	*/
+	
+	pagmo::problem::cec2006 prob(4);
 
-	std::vector<std::vector<double> > retval;
-	std::vector<double> dumb(2);
-	dumb[0] = 180;dumb[1] = 200;
-	retval.push_back(dumb);
-	dumb[0] = 0.1;dumb[1] = 5;
-	retval.push_back(dumb);
-	dumb[0] = 10;dumb[1] = 150;
-	retval.push_back(dumb);
-	dumb[0] = 10;dumb[1] = 40;
-	retval.push_back(dumb);
+	pagmo::algorithm::cstrs_co_evolution algo(pagmo::algorithm::jde(), pagmo::algorithm::sga(1), 30, 10, pagmo::algorithm::cstrs_co_evolution::method_type::SIMPLE, 0., 100000., 1e-15, 1e-15);
+	//pagmo::algorithm::cstrs_immune_system algo(pagmo::algorithm::jde(1), pagmo::algorithm::sga(), 10, pagmo::algorithm::cstrs_immune_system::select_method_type::BEST_ANTIBODY, pagmo::algorithm::cstrs_immune_system::inject_method_type::CHAMPION, pagmo::algorithm::cstrs_immune_system::distance_method_type::EUCLIDEAN, 0.5, 0.5, 1./3., 1e-15, 1e-15);
+	//pagmo::algorithm::cstrs_self_adaptive algo(pagmo::algorithm::jde(), 10, 1e-15, 1e-15);
+	//pagmo::algorithm::cstrs_core algo(pagmo::algorithm::jde(1), pagmo::algorithm::jde(1), 1, 10, 1.,pagmo::algorithm::cstrs_core::repair_type::UNCONSTRAINED,1e-15,1e-15);
 
-	std::vector<kep_toolbox::planet_ptr> retval_planet;
-	retval_planet.push_back(kep_toolbox::planet_js("callisto").clone());
-	retval_planet.push_back(kep_toolbox::planet_js("ganymede").clone());
-	retval_planet.push_back(kep_toolbox::planet_js("ganymede").clone());
-	retval_planet.push_back(kep_toolbox::planet_js("ganymede").clone());
+	pagmo::population pop(prob,60);
+	std::cout<<pop.problem().get_fevals()<<" "<<pop.problem().get_cevals()<<std::endl;
 
-	decision_vector x(18);
-	for(int i=0; i<18; i++) 
-		x[i] = 0.5;
-
-	pagmo::problem::mga_incipit_cstrs prob(retval_planet, kep_toolbox::epoch(10460.0), kep_toolbox::epoch(10480.0),retval,365,std::vector<double>(3,2.0),0.3,10000000,0.1,0.0);
-
-	prob.compute_constraints(x);
-
-	int uscita;
-	std::cin>>uscita;
+	for(int i=0; i<5; i++){
+		algo.evolve(pop);
+		std::cout<<pop.problem().get_fevals()<<" "<<pop.problem().get_cevals()<<std::endl;
+	}
 }

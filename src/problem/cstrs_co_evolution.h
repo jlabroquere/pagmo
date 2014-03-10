@@ -120,6 +120,11 @@ protected:
 	void objfun_impl(fitness_vector &, const decision_vector &) const;
 	bool compare_fitness_impl(const fitness_vector &, const fitness_vector &) const;
 
+	unsigned int get_fevals() const 
+		{return (m_original_problem->get_fevals() - m_initial_fevals);}
+	unsigned int get_cevals() const 
+		{return (m_original_problem->get_cevals() - m_initial_cevals);}	
+
 private:
 	void compute_penalty(double &, int &, const decision_vector &) const;
 
@@ -138,6 +143,8 @@ private:
 		ar & m_total_num_viol;
 	}
 	base_ptr m_original_problem;
+	unsigned int m_initial_fevals;
+	unsigned int m_initial_cevals;
 
 	std::vector<decision_vector> m_pop_2_x_vector;
 

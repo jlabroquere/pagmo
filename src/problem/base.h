@@ -417,9 +417,13 @@ class __PAGMO_VISIBLE base
 		
 		// function that add number of function and constraints evaluations. To be used in the algorithm when the problem is cloned and need to update the overall number of function evaluations
 		void add_fevals(unsigned int fevals) const 
-		      {m_fevals += fevals;}
+		{
+			m_fevals += fevals;
+		}
 		void add_cevals(unsigned int cevals) const
-		      {m_cevals += cevals;}
+		{
+			m_cevals += cevals;
+		}
 		
 		/// Clone method.
 		/**
@@ -563,8 +567,8 @@ return base_ptr(new derived_problem(*this));
 		std::vector<constraint_vector> m_best_c;
 
 		// Number of function and constraints evaluations
-		mutable unsigned long long int m_fevals;
-		mutable unsigned long long int m_cevals;
+		mutable unsigned long int m_fevals;
+		mutable unsigned long int m_cevals;
 };
 
 std::ostream __PAGMO_VISIBLE_FUNC &operator<<(std::ostream &, const base &);

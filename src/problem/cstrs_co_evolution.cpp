@@ -386,7 +386,9 @@ cstrs_co_evolution_penalty::cstrs_co_evolution_penalty(const base &problem, int 
 	m_feasible_fitness_sum_vector(size,0.0),
 	m_max_feasible_fitness(0.),
 	m_total_sum_viol(size,0.0),
-	m_total_num_viol(size,0)
+	m_total_num_viol(size,0),
+	m_initial_fevals(0),
+	m_initial_cevals(0)
 {
 	if(m_original_problem->get_c_dimension() <= 0){
 		pagmo_throw(value_error,"The original problem has no constraints.");
@@ -398,6 +400,9 @@ cstrs_co_evolution_penalty::cstrs_co_evolution_penalty(const base &problem, int 
 	}
 
 	set_bounds(0.,10000.);
+
+	m_initial_fevals = m_original_problem->get_fevals();
+	m_initial_cevals = m_original_problem->get_cevals();
 }
 
 /// Copy Constructor. Performs a deep copy
@@ -409,7 +414,9 @@ cstrs_co_evolution_penalty::cstrs_co_evolution_penalty(const cstrs_co_evolution_
 	m_feasible_fitness_sum_vector(prob.m_feasible_fitness_sum_vector),
 	m_max_feasible_fitness(prob.m_max_feasible_fitness),
 	m_total_sum_viol(prob.m_total_sum_viol),
-	m_total_num_viol(prob.m_total_num_viol)
+	m_total_num_viol(prob.m_total_num_viol),
+	m_initial_fevals(prob.m_initial_fevals),
+	m_initial_cevals(prob.m_initial_cevals)
 {
 	set_bounds(prob.get_lb(),prob.get_ub());
 }

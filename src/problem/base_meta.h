@@ -52,17 +52,19 @@ class __PAGMO_VISIBLE base_meta : public base
 	public:
 		/// Constructor
 		base_meta(const base &p = ackley(1), int n=1, int ni=0, int nf=1, int nc=0, int nic=0, const std::vector<double>&c_tol = std::vector<double>()):
-			 base(n,ni,nf,nc,nic,c_tol), m_original_problem(p.clone()) {
+			 base(n,ni,nf,nc,nic,c_tol), m_original_problem(p.clone()), m_initial_fevals(0), m_initial_cevals(0) {
 			 	//Setting the bounds according to the original problem
 				set_bounds(m_original_problem->get_lb(),m_original_problem->get_ub());
+				m_initial_fevals = m_original_problem->get_fevals();
+				m_initial_cevals = m_original_problem->get_cevals();
 			 }
 		/// Copy constructor
-		base_meta(const base_meta &p):base(p), m_original_problem(p.m_original_problem->clone()) {}
+		base_meta(const base_meta &p):base(p), m_original_problem(p.m_original_problem->clone()), m_initial_fevals(p.m_initial_fevals), m_initial_cevals(p.m_initial_cevals) {}
 		
 		unsigned int get_fevals() const 
-			{return m_original_problem->get_fevals();}
+			{return (m_original_problem->get_fevals() - m_initial_fevals);}
 		unsigned int get_cevals() const 
-			{return m_original_problem->get_cevals();}	
+			{return (m_original_problem->get_cevals() - m_initial_cevals);}	
 			
 	protected:
 		bool compare_fitness_impl(const fitness_vector &f1, const fitness_vector &f2) const 
@@ -85,6 +87,8 @@ class __PAGMO_VISIBLE base_meta : public base
 	protected:
 		/// Smart pointer to the original problem instance
 		base_ptr m_original_problem;
+		unsigned int m_initial_fevals;
+		unsigned int m_initial_cevals;
 };
 
 }} //namespaces

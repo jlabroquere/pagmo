@@ -457,6 +457,16 @@ unsigned int base::get_cevals() const
 	return m_cevals;
 }
 
+// function that add number of function and constraints evaluations. To be used in the algorithm when the problem is cloned and need to update the overall number of function evaluations
+void base::add_fevals(unsigned int fevals) const 
+{
+	m_fevals += fevals;
+}
+void base::add_cevals(unsigned int cevals) const
+{
+	m_cevals += cevals;
+}
+
 
 /// Return global dimension.
 /**

@@ -78,9 +78,9 @@ int main()
 	
 	pagmo::problem::cec2006 prob(4);
 
-	pagmo::algorithm::cstrs_co_evolution algo(pagmo::algorithm::jde(), pagmo::algorithm::sga(1), 30, 10, pagmo::algorithm::cstrs_co_evolution::method_type::SIMPLE, 0., 100000., 1e-15, 1e-15);
-	//pagmo::algorithm::cstrs_immune_system algo(pagmo::algorithm::jde(1), pagmo::algorithm::sga(), 10, pagmo::algorithm::cstrs_immune_system::select_method_type::BEST_ANTIBODY, pagmo::algorithm::cstrs_immune_system::inject_method_type::CHAMPION, pagmo::algorithm::cstrs_immune_system::distance_method_type::EUCLIDEAN, 0.5, 0.5, 1./3., 1e-15, 1e-15);
-	//pagmo::algorithm::cstrs_self_adaptive algo(pagmo::algorithm::jde(), 10, 1e-15, 1e-15);
+	pagmo::algorithm::cstrs_co_evolution algo(pagmo::algorithm::jde(10), pagmo::algorithm::sga(1), 30, 10, pagmo::algorithm::cstrs_co_evolution::method_type::SIMPLE, 0., 100000., 1e-15, 1e-15);
+	//pagmo::algorithm::cstrs_immune_system algo(pagmo::algorithm::jde(1), pagmo::algorithm::sga(10), 10, pagmo::algorithm::cstrs_immune_system::select_method_type::BEST_ANTIBODY, pagmo::algorithm::cstrs_immune_system::inject_method_type::CHAMPION, pagmo::algorithm::cstrs_immune_system::distance_method_type::EUCLIDEAN, 0.5, 0.5, 1./3., 1e-15, 1e-15);
+	//pagmo::algorithm::cstrs_self_adaptive algo(pagmo::algorithm::jde(10), 10, 1e-15, 1e-15);
 	//pagmo::algorithm::cstrs_core algo(pagmo::algorithm::jde(1), pagmo::algorithm::jde(1), 1, 10, 1.,pagmo::algorithm::cstrs_core::repair_type::UNCONSTRAINED,1e-15,1e-15);
 
 	pagmo::population pop(prob,60);

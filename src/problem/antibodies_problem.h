@@ -87,6 +87,7 @@ private:
 	}
 
 	base_ptr m_original_problem;
+	
 	std::vector<decision_vector> m_pop_antigens;
 
 	const algorithm::cstrs_immune_system::distance_method_type m_method;

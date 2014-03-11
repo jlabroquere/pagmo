@@ -67,6 +67,7 @@ antibodies_problem::antibodies_problem(const base &problem, const algorithm::cst
 	m_max_encoding_integer = int(std::pow(2., m_bit_encoding));
 
 	set_bounds(m_original_problem->get_lb(),m_original_problem->get_ub());
+
 }
 
 /// Copy Constructor. Performs a deep copy

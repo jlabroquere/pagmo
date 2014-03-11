@@ -197,6 +197,8 @@ void cstrs_core::evolve(population &pop) const
 		m_original_algo->evolve(pop_uncon);
 
 		// push back the population in the main problem
+		//FIRST RECOMPUTATION
+
 		pop.clear();
 		for(population::size_type i=0; i<pop_size; i++) {
 			pop.push_back(pop_uncon.get_individual(i).cur_x);
@@ -239,8 +241,8 @@ void cstrs_core::evolve(population &pop) const
 	}
 
 	//update number of fitness and constraints evaluations.
-	prob.add_fevals(pop_uncon.problem().get_fevals());
-	prob.add_cevals(pop_uncon.problem().get_cevals());
+	prob.add_fevals(pop_uncon.problem().get_fevals() - pop_size*m_gen);
+	prob.add_cevals(pop_uncon.problem().get_cevals() - pop_size*m_gen);
 	//m_fevals = m_original_algo->get_fevals() + m_repair_algo->get_fevals();
 }
 

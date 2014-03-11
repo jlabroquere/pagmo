@@ -130,9 +130,10 @@ void cstrs_self_adaptive::evolve(population &pop) const
 		if(!exists){
 			int worst=0;
 			for (pagmo::population::size_type i = 1; i<pop_new.size();i++) {
+				//FIRST RECOMPUTATION
 				if ( prob.compare_x(pop_new.get_individual(worst).cur_x,pop_new.get_individual(i).cur_x) ) worst=i;
 			}
-
+			 
 			decision_vector dummy = pop.champion().x;
 			std::transform(dummy.begin(), dummy.end(), pop.get_individual(worst).cur_x.begin(), dummy.begin(),std::minus<double>());
 			//updates x and v (cache avoids to recompute the objective function)
@@ -141,6 +142,7 @@ void cstrs_self_adaptive::evolve(population &pop) const
 		}
 
 		// update the population pop
+		//SECOND RECOMPUTATION
 		pop.clear();
 		for(pagmo::population::size_type i=0; i<pop_new.size(); i++) {
 			pop.push_back(pop_new.get_individual(i).cur_x);
@@ -182,12 +184,11 @@ void cstrs_self_adaptive::evolve(population &pop) const
 		}
 		
 		//update number of fitness and constraints evaluations.
-		prob.add_fevals(pop_new.problem().get_fevals());
-		prob.add_cevals(pop_new.problem().get_cevals());
+		prob.add_fevals(pop_new.problem().get_fevals()-2*pop_new.size());
+		prob.add_cevals(pop_new.problem().get_cevals()-2*pop_new.size());
 
 	}
 
-	//m_fevals = m_original_algo->get_fevals();
 }
 
 /// Algorithm name

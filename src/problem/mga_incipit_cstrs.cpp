@@ -59,7 +59,7 @@ namespace pagmo { namespace problem {
  * @param[in] tof time-of-flight vector containing lower and upper bounds (in days) for the various legs time of flights
  * @param[in] tmax maximum time of flight
  * @param[in] dmin minimum distance from Jupiter (for radiation protection)
- * @param[in] thrust technological limitation on the thrust
+ * @param[in] accel technological limitation on the accel
  * @param[in] a_final orbit insertion semimajor axis
  * @param[in] e_final orbit insertion eccentricity
  * @param[in] i_final orbit insertion inclination
@@ -75,11 +75,11 @@ mga_incipit_cstrs::mga_incipit_cstrs(
 			 const std::vector<std::vector<double> > tof,
 			 const double tmax,
 			 const std::vector<double> dmin,
-			 const double thrust,
+			 const double accel,
 			 const double a_final,
 			 const double e_final,
 			 const double i_final
-					) : base(4*seq.size()+2,0,1,compute_number_of_c(seq,tmax,dmin,thrust,a_final,e_final,i_final),compute_number_of_ic(seq,tmax,dmin,thrust),__constraint_tolerances__(compute_number_of_c(seq,tmax,dmin,thrust,a_final,e_final,i_final), compute_number_of_ic(seq,tmax,dmin,thrust))), m_tof(tof), m_tmax(tmax), m_dmin(dmin), m_thrust(thrust), m_a_final(a_final), m_e_final(e_final), m_i_final(i_final)
+					) : base(4*seq.size()+2,0,1,compute_number_of_c(seq,tmax,dmin,accel,a_final,e_final,i_final),compute_number_of_ic(seq,tmax,dmin,accel),__constraint_tolerances__(compute_number_of_c(seq,tmax,dmin,accel,a_final,e_final,i_final), compute_number_of_ic(seq,tmax,dmin,accel))), m_tof(tof), m_tmax(tmax), m_dmin(dmin), m_accel(accel), m_a_final(a_final), m_e_final(e_final), m_i_final(i_final)
 {
 	// We check that all planets have equal central body
 	std::vector<double> mus(seq.size());
@@ -112,8 +112,8 @@ mga_incipit_cstrs::mga_incipit_cstrs(
 		if (dmin[i]<0.0) 
 			pagmo_throw(value_error,"The minimum distance from the center of the system must be positive");  
 	}
-	if (thrust<0){
-		pagmo_throw(value_error,"The technological constraint on the thrust need to be positive");  
+	if (accel<0){
+		pagmo_throw(value_error,"The technological constraint on the accel need to be positive");
 	}
 	if (a_final<=0 && a_final!= -1.0){
 		pagmo_throw(value_error,"The final semimajor axis must be positive");  
@@ -167,7 +167,7 @@ mga_incipit_cstrs::mga_incipit_cstrs(const mga_incipit_cstrs &p) :
 	 m_tof(p.m_tof),
 	 m_tmax(p.m_tmax),
 	 m_dmin(p.m_dmin),
-	 m_thrust(p.m_thrust),
+	 m_accel(p.m_accel),
 	 m_a_final(p.m_a_final),
 	 m_e_final(p.m_e_final),
 	 m_i_final(p.m_i_final)	 
@@ -185,14 +185,14 @@ base_ptr mga_incipit_cstrs::clone() const
 }
 
 
-pagmo::problem::base::c_size_type mga_incipit_cstrs::compute_number_of_c(const std::vector<kep_toolbox::planet_ptr> &seq, const double &tmax, const std::vector<double> &dmin, const double &thrust, const double &a_final, const double &e_final, const double &i_final) const{
+pagmo::problem::base::c_size_type mga_incipit_cstrs::compute_number_of_c(const std::vector<kep_toolbox::planet_ptr> &seq, const double &tmax, const std::vector<double> &dmin, const double &accel, const double &a_final, const double &e_final, const double &i_final) const{
 	pagmo::problem::base::c_size_type n_count = 0;
   
 	if(tmax > 0.0) n_count++;
 	for (size_t i = 0; i < dmin.size(); ++i) {
 	    if (dmin[i] > 0.0) n_count++; 
 	}
-	if(thrust > 0.0) n_count = n_count+seq.size();
+	if(accel > 0.0) n_count = n_count+seq.size();
 	
 	if(a_final != -1.0) n_count++;
 	if(e_final != -1.0) n_count++;
@@ -201,14 +201,14 @@ pagmo::problem::base::c_size_type mga_incipit_cstrs::compute_number_of_c(const s
   	return n_count;
 }
 
-pagmo::problem::base::c_size_type mga_incipit_cstrs::compute_number_of_ic(const std::vector<kep_toolbox::planet_ptr> &seq, const double &tmax, const std::vector<double> &dmin, const double &thrust) const{
+pagmo::problem::base::c_size_type mga_incipit_cstrs::compute_number_of_ic(const std::vector<kep_toolbox::planet_ptr> &seq, const double &tmax, const std::vector<double> &dmin, const double &accel) const{
   	pagmo::problem::base::c_size_type n_count = 0;
   
 	if(tmax > 0.0) n_count++;
 	for (size_t i = 0; i < dmin.size(); ++i) {
 	    if (dmin[i] > 0.0) n_count++; 
 	}
-	if(thrust > 0.0) n_count = n_count+seq.size();
+	if(accel > 0.0) n_count = n_count+seq.size();
   	
   	return n_count;
 }
@@ -345,8 +345,7 @@ try {
 		kep_toolbox::diff(v_out, v_beg_l, v);
 		DV[i] = kep_toolbox::norm(v_out);// + std::max((2.0-d),0.0) * 1000.0;
 	}
-	
-	
+
 	// compute final insertion orbit
 	kep_toolbox::fb_prop(v_out, v_end_l, v_P[m_seq.size()-1], x[4*m_seq.size()+1] * m_seq[m_seq.size()-1]->get_radius(), x[4*m_seq.size()], m_seq[m_seq.size()-1]->get_mu_self());
 	r = r_P[m_seq.size()-1];
@@ -387,11 +386,13 @@ try {
 	  }
 	}
 
-	if(m_thrust > 0.0){
-	  for (size_t i = 0; i<m_seq.size(); ++i) { 
-	     c[index_cstrs] =  DV[i]/T[i] - m_thrust;
-	     index_cstrs++;
-	  }
+	if(m_accel > 0.0){
+		std::vector<double> eta(m_seq.size());
+
+		for (size_t i = 0; i<m_seq.size(); ++i) {
+			c[index_cstrs] =  DV[i]/(T[i]*24.*3600.) - m_accel;
+			index_cstrs++;
+		}
 	}
 	
 //Here the lambert solver or the lagrangian propagator went wrong
@@ -570,7 +571,7 @@ std::string mga_incipit_cstrs::human_readable_extra() const
 	}
 	oss << "\n\tMaximum time of flight [days]: " << m_tmax;
 	oss << "\n\tMinimum distance from Jupiter: " << m_dmin;
-	oss << "\n\tTechnological limitation on the impulsive maneuver: " << m_thrust;
+	oss << "\n\tTechnological limitation on the impulsive maneuver: " << m_accel;
 	oss << "\n\tOrbit insertion in the Jupiter system, a [m]: " << m_a_final;
 	oss << "\n\tOrbit insertion in the Jupiter system, e [-]: " << m_e_final;
 	oss << "\n\tOrbit insertion in the Jupiter system, i [rad]: " << m_i_final;

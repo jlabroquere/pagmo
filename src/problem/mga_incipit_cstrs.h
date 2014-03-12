@@ -58,7 +58,7 @@ class __PAGMO_VISIBLE mga_incipit_cstrs: public base
 			 const std::vector<std::vector<double> > tof = construct_default_tofs(),
 			 const double tmax = 0.0,
 			 const std::vector<double> dmin = std::vector<double>(2,0.0),
-			 const double thrust = 0.0,
+			 const double accel = 0.0,
 			 const double a_final = -1.0,
 			 const double e_final = -1.0,
 			 const double i_final = -1.0);
@@ -71,8 +71,8 @@ class __PAGMO_VISIBLE mga_incipit_cstrs: public base
 		const std::vector<std::vector<double> >& get_tof() const;
 		std::vector<kep_toolbox::planet_ptr> get_sequence() const;
 		
-		pagmo::problem::base::c_size_type compute_number_of_c(const std::vector<kep_toolbox::planet_ptr> &seq, const double &tmax, const std::vector<double> &dmin, const double &thrust, const double &a_final, const double &e_final, const double &i_final) const;
-		pagmo::problem::base::c_size_type compute_number_of_ic(const std::vector<kep_toolbox::planet_ptr> &seq, const double &tmax, const std::vector<double> &dmin, const double &thrust) const;
+		pagmo::problem::base::c_size_type compute_number_of_c(const std::vector<kep_toolbox::planet_ptr> &seq, const double &tmax, const std::vector<double> &dmin, const double &accel, const double &a_final, const double &e_final, const double &i_final) const;
+		pagmo::problem::base::c_size_type compute_number_of_ic(const std::vector<kep_toolbox::planet_ptr> &seq, const double &tmax, const std::vector<double> &dmin, const double &accel) const;
 		
 	protected:
 		void objfun_impl(fitness_vector &, const decision_vector &) const;
@@ -109,7 +109,7 @@ class __PAGMO_VISIBLE mga_incipit_cstrs: public base
 			ar & m_tof;
 			ar & const_cast<double &>(m_tmax);
 			ar & const_cast<std::vector<double> &>(m_dmin);
-			ar & const_cast<double &>(m_thrust);
+			ar & const_cast<double &>(m_accel);
 			ar & const_cast<double &>(m_a_final);
 			ar & const_cast<double &>(m_e_final);
 			ar & const_cast<double &>(m_i_final);
@@ -120,7 +120,7 @@ class __PAGMO_VISIBLE mga_incipit_cstrs: public base
 		//constraints parameters
 		const double m_tmax; //maximum time of flight
 		const std::vector<double> m_dmin; //minimum distance to center of the system at each leg
-		const double m_thrust; //technological constraint on DV
+		const double m_accel; //technological constraint on DV
 		const double m_a_final; //final semi major axis
 		const double m_e_final; //final eccentricity
 		const double m_i_final; //final inclination

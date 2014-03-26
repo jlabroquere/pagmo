@@ -324,6 +324,7 @@ class __PAGMO_VISIBLE base
 		}
 		void set_bounds(const double &, const double &);
 		void set_bounds(int, const double &, const double &);
+		void set_c_tol(const std::vector<double>&);
 		void set_lb(const decision_vector &);
 		void set_lb(int, const double &);
 		void set_lb(const double &);
@@ -548,7 +549,7 @@ return base_ptr(new derived_problem(*this));
 		// Upper bounds.
 		decision_vector				m_ub;
 		// Tolerance for constraints analysis.
-		const std::vector<double>   m_c_tol;
+		std::vector<double>         m_c_tol;
 		// Decision vector cache for fitness.
 		mutable decision_vector_cache_type	m_decision_vector_cache_f;
 		// Fitness vector cache.

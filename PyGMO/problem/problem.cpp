@@ -153,6 +153,7 @@ BOOST_PYTHON_MODULE(_problem) {
 	typedef void (problem::base::*bounds_setter)(const decision_vector &);
 	typedef void (problem::base::*bounds_setter_value)(const double &, const double &);
 	typedef void (problem::base::*bounds_setter_vectors)(const decision_vector &, const decision_vector &);
+	typedef void (problem::base::*c_tol_setter)(const std::vector<double>&);
 	typedef void (problem::base::*best_x_setter)(const std::vector<decision_vector>&);
 	typedef constraint_vector (problem::base::*return_constraints)(const decision_vector &) const;
 	typedef fitness_vector (problem::base::*return_fitness)(const decision_vector &) const;
@@ -167,7 +168,7 @@ BOOST_PYTHON_MODULE(_problem) {
 		.add_property("c_dimension", &problem::base::get_c_dimension, "Global constraints dimension.")
 		.add_property("ic_dimension", &problem::base::get_ic_dimension, "Inequality constraints dimension.")
 		// Constraints tolerance.
-		.add_property("c_tol", make_function(&problem::base::get_c_tol,return_value_policy<copy_const_reference>()), "Tolerance used in constraints analysis.")
+		.add_property("c_tol", make_function(&problem::base::get_c_tol,return_value_policy<copy_const_reference>()), c_tol_setter(&problem::base::set_c_tol), "Tolerance used in constraints analysis.")
 		// Bounds.
 		.add_property("lb",make_function(&problem::base::get_lb,return_value_policy<copy_const_reference>()), bounds_setter(&problem::base::set_lb), "Lower bounds.")
 		.add_property("ub",make_function(&problem::base::get_ub,return_value_policy<copy_const_reference>()), bounds_setter(&problem::base::set_ub), "Upper bounds.")
@@ -223,7 +224,7 @@ BOOST_PYTHON_MODULE(_problem) {
 		.add_property("c_dimension", &problem::base::get_c_dimension, "Global constraints dimension.")
 		.add_property("ic_dimension", &problem::base::get_ic_dimension, "Inequality constraints dimension.")
 		// Constraints tolerance.
-		.add_property("c_tol", make_function(&problem::base::get_c_tol,return_value_policy<copy_const_reference>()), "Tolerance used in constraints analysis.")
+		.add_property("c_tol", make_function(&problem::base::get_c_tol,return_value_policy<copy_const_reference>()), c_tol_setter(&problem::base::set_c_tol), "Tolerance used in constraints analysis.")
 		// Bounds.
 		.add_property("lb",make_function(&problem::base::get_lb,return_value_policy<copy_const_reference>()), bounds_setter(&problem::base::set_lb), "Lower bounds.")
 		.add_property("ub",make_function(&problem::base::get_ub,return_value_policy<copy_const_reference>()), bounds_setter(&problem::base::set_ub), "Upper bounds.")

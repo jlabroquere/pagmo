@@ -333,6 +333,24 @@ void base::set_bounds(int n, const double &l_value, const double &u_value)
 	normalise_bounds();
 }
 
+/// Sets the constraints tolerances.
+/**
+ * Will fail if the number of tolerances doesn't match the number of constraints or if the equality constraints tolerances are negative.
+ * @param[in] c_tol constraints tolerances.
+ */
+void base::set_c_tol(const std::vector<double> &c_tol)
+{
+	if (c_tol.size() != m_c_dimension) {
+		pagmo_throw(value_error,"invalid constraints vector dimension");
+	}
+	for (unsigned int i=0; i < (m_c_dimension - m_ic_dimension); ++i) {
+		if (c_tol[i] < 0) {
+			pagmo_throw(value_error,"equality constraints tolerance must be non-negative");
+		}
+	}
+	m_c_tol = c_tol;
+}
+
 /// Set lower bounds from pagmo::decision_vector.
 /**
  * Will fail if lb's size is different from the global size or if at least one lower bound is greater than the corresponding upper bound.
